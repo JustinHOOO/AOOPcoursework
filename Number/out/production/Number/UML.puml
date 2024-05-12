@@ -1,0 +1,106 @@
+@startuml
+
+interface INumberleModel {
+    + MAX_ATTEMPTS : int
+    + initialize() : void
+    + processInput(input : String) : boolean
+    + isGameOver() : boolean
+    + isGameWon() : boolean
+    + getTargetNumber() : String
+    + getCurrentGuess() : StringBuilder
+    + getRemainingAttempts() : int
+    + startNewShowGame() : void
+}
+
+class NumberleModel {
+    - targetNumber : String
+    - currentGuess : StringBuilder
+    - remainingAttempts : int
+    - gameWon : boolean
+
+    + initialize() : void
+    + processInput(input : String) : boolean
+    + isGameOver() : boolean
+    + isGameWon() : boolean
+    + getTargetNumber() : String
+    + getCurrentGuess() : StringBuilder
+    + getRemainingAttempts() : int
+    + startNewGame() : void
+    + getFormula() : StringBuilder
+}
+
+NumberleModel ..|> INumberleModel
+
+class NumberleController {
+    - model : INumberleModel
+    - view : NumberleView
+
+    + NumberleController(model : INumberleModel)
+    + setView(view : NumberleView) : void
+    + processInput(input : String) : void
+    + isGameOver() : boolean
+    + isGameWon() : boolean
+    + getTargetWord() : String
+    + getCurrentGuess() : StringBuilder
+    + getRemainingAttempts() : int
+    + startNewGame() : void
+}
+
+class NumberleView {
+    - model : INumberleModel
+    - controller : NumberleController
+    - frame : JFrame
+    - fill : JTextField[][]
+    - key : JButton[]
+    - Abscissa : int
+    - Ordinate : int
+
+    + NumberleView(model : INumberleModel, controller : NumberleController)
+    + initializeFrame() : void
+    + update(o : Observable, arg : Object) : void
+    + init() : void
+    + setColor(formula : String) : void
+    + judge(formula : String) : boolean
+    + calculateExpression(expression : String) : int
+}
+
+interface Observer {
+    + update(o : Observable, arg : Object) : void
+}
+
+class Observable {
+    + addObserver(o : Observer) : void
+    + deleteObserver(o : Observer) : void
+    + setChanged() : void
+    + notifyObservers() : void
+}
+
+NumberleView ..|> Observer
+NumberleView .. Observable
+NumberleView -- controller : NumberleController
+
+NumberleController -- model : INumberleModel
+NumberleController -- view : NumberleView
+
+class GUIApp {
+    + main(args : String[]) : void
+    + createAndShowGUI() : void
+}
+
+GUIApp ..> NumberleModel
+GUIApp ..> NumberleController
+GUIApp ..> NumberleView
+
+class CLIApp {
+    + main(args : String[]) : void
+    + judge(formula : String) : boolean
+    + calculateExpression(expression : String) : int
+    + applyOperation(op : char, b : int, a : int) : int
+    + hasPrecedence(op1 : char, op2 : char) : boolean
+    + setColor(formula : String) : void
+}
+
+CLIApp -- model : INumberleModel
+CLIApp -- controller : NumberleController
+
+@enduml
